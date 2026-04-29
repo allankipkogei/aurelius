@@ -157,16 +157,8 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-24 text-[10px] tracking-[0.4em] text-gray-400 uppercase text-center">
             <div className="space-y-4">
-              <p className="text-amber-600 italic font-bold">Physical Gallery</p>
-              <p className="leading-relaxed">Westlands Commercial Centre<br/>Nairobi, KE</p>
-            </div>
-            <div className="space-y-4">
               <p className="text-amber-600 italic font-bold">Direct Line</p>
-              <p>+254 700 000 000</p>
-            </div>
-            <div className="space-y-4">
-              <p className="text-amber-600 italic font-bold">Digital Mail</p>
-              <p>curation@aurelius.ke</p>
+              <p>+254 118983818</p>
             </div>
           </div>
 
@@ -190,8 +182,6 @@ export default function Home() {
       <footer className="py-16 px-6 text-center text-gray-700 border-t border-white/5 bg-black/40 backdrop-blur-md">
         <div className="flex justify-center gap-8 mb-8 text-[10px] uppercase tracking-[0.3em]">
           <a href="#" className="hover:text-amber-600 transition-colors">Instagram</a>
-          <a href="#" className="hover:text-amber-600 transition-colors">Twitter</a>
-          <a href="#" className="hover:text-amber-600 transition-colors">LinkedIn</a>
         </div>
         <p className="text-[9px] uppercase tracking-[0.5em] opacity-40">© 2026 Aurelius Timepieces Nairobi • A Standard of Excellence</p>
       </footer>
