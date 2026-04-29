@@ -211,9 +211,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. Footer */}
-      <footer className="py-16 px-6 text-center text-gray-700 border-t border-white/5 bg-black/40 backdrop-blur-md">
-        <p className="text-[9px] uppercase tracking-[0.5em] opacity-40">© 2026 Aurelius Timepieces Nairobi • A Standard of Excellence</p>
+      {/* 7. Footer - Updated for better visibility */}
+      <footer className="py-16 px-6 text-center border-t border-white/5 bg-black/40 backdrop-blur-md">
+       <div className="flex justify-center gap-8 mb-8 text-[10px] uppercase tracking-[0.3em] text-gray-400">
+    <a href="#" className="hover:text-amber-600 transition-colors">Instagram</a>
+    {/* Add other socials here if needed */}
+  </div>
+  <p className="text-[9px] uppercase tracking-[0.5em] text-gray-500 font-medium">
+    © 2026 Aurelius Timepieces Nairobi • A Standard of Excellence
+  </p>
       </footer>
 
       {/* 8. Modern Checkout Modal */}
