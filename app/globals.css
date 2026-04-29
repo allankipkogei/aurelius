@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Custom Luxury Colors */
+  --color-gold: #d97706; /* amber-600 */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #050505;
+  --foreground: #ffffff;
 }
 
+/* Base styles */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative; /* Required for the ::before grain to stay in place */
+  min-height: 100vh;
+}
+
+/* The Luxury Grain Effect */
+body::before {
+  content: "";
+  position: fixed; /* Changed from 'fixed' to 'position: fixed' to fix syntax */
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.04; /* Slightly increased for better visibility on dark screens */
+  z-index: 50; /* Keeps it above the background but below content */
+  pointer-events: none;
+  background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+  background-repeat: repeat;
+}
+
+/* Smooth Scrolling for the Navigation links */
+html {
+  scroll-behavior: smooth;
 }
