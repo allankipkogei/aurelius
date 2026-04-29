@@ -18,6 +18,46 @@ export default function Home() {
 
   const addToCart = () => setCartCount(prev => prev + 1);
 
+  // --- NEW: M-PESA TRIGGER LOGIC ---
+  const handlePayment = async () => {
+    if (!phoneNumber) {
+      alert("Please enter a phone number");
+      return;
+    }
+
+    // Convert 07... to 2547... format for Safaricom
+    const formattedPhone = phoneNumber.startsWith('0') 
+      ? '254' + phoneNumber.slice(1) 
+      : phoneNumber.replace(/\s+/g, ''); // Remove spaces
+
+    setIsProcessing(true);
+    
+    try {
+      const response = await fetch("/api/stkpush", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: cartCount * 2500, 
+          phone: formattedPhone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.ResponseCode === "0") {
+        alert("Success! Check your phone for the M-Pesa prompt.");
+        setIsCheckoutOpen(false); 
+      } else {
+        alert("M-Pesa Error: " + (data.CustomerMessage || "Request failed. Check Vercel logs."));
+      }
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert("Failed to connect to the payment server.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <main className="relative min-h-screen bg-transparent text-white font-sans selection:bg-amber-600/30 selection:text-white">
       
@@ -63,7 +103,6 @@ export default function Home() {
         <a href="#collection" className="group relative bg-amber-600 overflow-hidden text-white px-12 py-5 text-[10px] uppercase tracking-[0.4em] transition-all shadow-2xl shadow-amber-900/40">
           <span className="relative z-10">Explore Collection</span>
           <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 -z-0" />
-          <style jsx>{`.group:hover span { color: black; }`}</style>
         </a>
       </section>
 
@@ -75,7 +114,6 @@ export default function Home() {
               <h3 className="text-amber-600 uppercase tracking-[0.5em] text-[10px] mb-4">The 2026 Registry</h3>
               <h4 className="text-4xl md:text-5xl font-serif italic text-white/90">Selected Curations</h4>
             </div>
-            <div className="h-[1px] flex-grow mx-12 bg-white/5 hidden lg:block" />
             <button className="text-[10px] uppercase tracking-[0.3em] border-b border-amber-600/50 pb-2 text-gray-400 hover:text-amber-500 transition-colors italic">
               View Full Gallery
             </button>
@@ -165,13 +203,8 @@ export default function Home() {
           <form className="max-w-2xl mx-auto space-y-10">
             <div className="group relative">
               <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-white/10 py-4 text-xs tracking-[0.3em] focus:border-amber-600 outline-none transition-all placeholder:text-gray-800 uppercase text-white" />
-              <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-amber-600 transition-all duration-700 group-focus-within:w-full" />
             </div>
-            <div className="group relative">
-              <input type="email" placeholder="EMAIL" className="w-full bg-transparent border-b border-white/10 py-4 text-xs tracking-[0.3em] focus:border-amber-600 outline-none transition-all placeholder:text-gray-800 uppercase text-white" />
-              <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-amber-600 transition-all duration-700 group-focus-within:w-full" />
-            </div>
-            <button type="button" className="w-full bg-white text-black py-6 text-[11px] font-bold uppercase tracking-[0.6em] hover:bg-amber-600 hover:text-white transition-all duration-500 shadow-xl shadow-black/50">
+            <button type="button" className="w-full bg-white text-black py-6 text-[11px] font-bold uppercase tracking-[0.6em] hover:bg-amber-600 hover:text-white transition-all duration-500">
               Send Inquiry
             </button>
           </form>
@@ -180,9 +213,6 @@ export default function Home() {
 
       {/* 7. Footer */}
       <footer className="py-16 px-6 text-center text-gray-700 border-t border-white/5 bg-black/40 backdrop-blur-md">
-        <div className="flex justify-center gap-8 mb-8 text-[10px] uppercase tracking-[0.3em]">
-          <a href="#" className="hover:text-amber-600 transition-colors">Instagram</a>
-        </div>
         <p className="text-[9px] uppercase tracking-[0.5em] opacity-40">© 2026 Aurelius Timepieces Nairobi • A Standard of Excellence</p>
       </footer>
 
@@ -218,13 +248,18 @@ export default function Home() {
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
               
+              {/* --- CONNECTED PAYMENT BUTTON --- */}
               <button 
-                onClick={() => alert("STK Push logic triggered.")}
-                className="w-full bg-amber-600 py-5 text-[11px] font-bold uppercase tracking-[0.5em] hover:bg-amber-700 transition-all shadow-2xl shadow-amber-900/40"
+                onClick={handlePayment}
+                disabled={isProcessing}
+                className={`w-full py-5 text-[11px] font-bold uppercase tracking-[0.5em] transition-all shadow-2xl ${
+                  isProcessing ? "bg-gray-700 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 shadow-amber-900/40"
+                }`}
               >
-                Request Payment
+                {isProcessing ? "Processing..." : "Request Payment"}
               </button>
-              <p className="mt-6 text-[9px] text-gray-600 uppercase tracking-widest leading-loose">
+
+              <p className="mt-6 text-[9px] text-gray-600 uppercase tracking-widest leading-loose text-center">
                 By proceeding, you will receive an M-Pesa prompt <br/> to authorize this acquisition.
               </p>
             </div>
