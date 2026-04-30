@@ -4,10 +4,10 @@ import { NextResponse } from 'next/server';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // Change this to a Promise
 ) {
   const client = await db.connect();
-  const id = params.id;
+  const { id } = await params; // Await the id here
 
   try {
     const { is_sold_out } = await request.json();

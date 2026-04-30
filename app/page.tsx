@@ -8,6 +8,7 @@ export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   // Handle navbar background on scroll
   useEffect(() => {
@@ -91,12 +92,12 @@ export default function Home() {
 
       {/* 3. Hero Section */}
       <section className="relative h-screen flex flex-col justify-center items-center text-center px-4 overflow-hidden bg-transparent">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-600/10 blur-[160px] rounded-full -z-10 animate-pulse" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] sm:w-[500px] sm:h-[500px] md:w-[700px] md:h-[700px] bg-amber-600/10 blur-[160px] rounded-full -z-10 animate-pulse" />
         
-        <h1 className="text-6xl md:text-9xl font-serif mb-8 tracking-tighter text-white/95 leading-none">
+        <h1 className="text-4xl sm:text-6xl md:text-9xl font-serif mb-8 sm:mb-8 tracking-tighter text-white/95 leading-none">
           Timeless <br className="md:hidden" /> <span className="italic text-amber-600">Precision.</span>
         </h1>
-        <p className="max-w-xl text-gray-400 text-base md:text-lg mb-12 font-light leading-relaxed tracking-wide">
+        <p className="max-w-xl text-gray-400 text-sm sm:text-base md:text-lg mb-8 sm:mb-12 font-light leading-relaxed tracking-wide">
           Curated excellence for the modern gentleman. Discover high-caliber timepieces 
           delivered across Nairobi's elite circles.
         </p>
@@ -107,11 +108,11 @@ export default function Home() {
       </section>
 
       {/* 4. Collection Section */}
-      <section id="collection" className="py-32 px-6 bg-[#0a0a0a]/40 border-y border-white/5 backdrop-blur-sm">
+      <section id="collection" className="py-20 sm:py-28 md:py-32 px-4 sm:px-6 bg-[#0a0a0a]/40 border-y border-white/5 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-6">
             <div>
-              <h3 className="text-amber-600 uppercase tracking-[0.5em] text-[10px] mb-4">The 2026 Registry</h3>
+              <h3 className="text-amber-600 uppercase tracking-[0.5em] text-[10px] mb-4">The Registry</h3>
               <h4 className="text-4xl md:text-5xl font-serif italic text-white/90">Selected Curations</h4>
             </div>
             <button className="text-[10px] uppercase tracking-[0.3em] border-b border-amber-600/50 pb-2 text-gray-400 hover:text-amber-500 transition-colors italic">
@@ -119,7 +120,7 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12 md:gap-16">
             {inventory.map((watch) => (
               <div key={watch.id} className="group">
                 <div className="aspect-[4/5] bg-neutral-900/20 mb-8 overflow-hidden border border-white/5 relative">
@@ -152,8 +153,8 @@ export default function Home() {
       </section>
 
       {/* 5. Heritage Section */}
-      <section id="about" className="py-40 px-6 bg-transparent">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-24">
+      <section id="about" className="py-20 sm:py-32 md:py-40 px-4 sm:px-6 bg-transparent">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
           <div className="w-full lg:w-1/2 aspect-[4/5] relative group">
             <div className="absolute -inset-4 border border-amber-600/20 translate-x-4 translate-y-4 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-700" />
             <div className="w-full h-full bg-neutral-900 relative border border-white/5 overflow-hidden">
@@ -175,9 +176,8 @@ export default function Home() {
               <p>
                 Aurelius was founded in Nairobi for those who understand that a timepiece is more than a tool—it is an inheritance. We curate only pieces that command respect.
               </p>
-              <div className="flex items-center gap-8 pt-8">
+              <div className="flex items-center gap-6 pt-8">
                 <div className="h-[1px] w-24 bg-amber-600/40" />
-                <span className="text-[10px] uppercase tracking-[0.5em] text-amber-600 font-bold">Established 2026</span>
               </div>
             </div>
           </div>
@@ -212,14 +212,13 @@ export default function Home() {
       </section>
 
       {/* 7. Footer - Updated for better visibility */}
-      <footer className="py-16 px-6 text-center border-t border-white/5 bg-black/40 backdrop-blur-md">
-       <div className="flex justify-center gap-8 mb-8 text-[10px] uppercase tracking-[0.3em] text-gray-400">
-    <a href="#" className="hover:text-amber-600 transition-colors">Instagram</a>
-    {/* Add other socials here if needed */}
-  </div>
-  <p className="text-[9px] uppercase tracking-[0.5em] text-gray-500 font-medium">
-    © 2026 Aurelius Timepieces Nairobi • A Standard of Excellence
-  </p>
+      <footer className="py-12 px-4 sm:px-6 text-center border-t border-white/5 bg-black/40 backdrop-blur-md">
+        <div className="flex justify-center gap-6 mb-6 text-[10px] uppercase tracking-[0.3em] text-gray-400">
+          <a href="#" className="hover:text-amber-600 transition-colors">Instagram</a>
+        </div>
+        <p className="text-[9px] sm:text-[9px] uppercase tracking-[0.5em] text-gray-500 font-medium">
+          © {currentYear} Aurelius Timepieces Nairobi • A Standard of Excellence
+        </p>
       </footer>
 
       {/* 8. Modern Checkout Modal */}
