@@ -1,11 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
 
+// Define an interface for your watch data
+interface Watch {
+  id: number;
+  name: string;
+  brand: string;
+  price: number;
+  is_sold_out: boolean;
+}
+
 export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [inventory, setInventory] = useState([]);
+  const [inventory, setInventory] = useState<Watch[]>([]); // Use the interface here
   const [formData, setFormData] = useState({
     name: "",
     brand: "",
@@ -13,18 +22,17 @@ export default function AdminPage() {
     image_url: "",
   });
 
-  // 1. Fetch Inventory Data
   const fetchInventory = async () => {
     try {
       const res = await fetch("/api/products");
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setInventory(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Failed to fetch inventory:", err);
+      console.error("Fetch error:", err);
     }
   };
 
-  // 2. Load inventory on successful login
   useEffect(() => {
     if (isAuthenticated) {
       fetchInventory();
@@ -50,39 +58,36 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          price: parseInt(formData.price),
+          price: parseInt(formData.price) || 0,
         }),
       });
 
       if (res.ok) {
-        alert("Watch added to the vault successfully.");
+        alert("Watch added!");
         setFormData({ name: "", brand: "", price: "", image_url: "" });
-        fetchInventory(); // Refresh the list after adding
-      } else {
-        const errorData = await res.json();
-        alert(`Error: ${errorData.error || "Failed to add watch"}`);
+        await fetchInventory();
       }
     } catch (err) {
-      alert("Network error. Check your console.");
+      alert("Error adding watch.");
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // 3. Toggle Sold Status
   const toggleSoldStatus = async (id: number, currentStatus: boolean) => {
     try {
-      await fetch(`/api/products/${id}`, {
+      const res = await fetch(`/api/products/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ is_sold_out: !currentStatus }),
       });
-      fetchInventory(); // Refresh the list
+      if (res.ok) await fetchInventory();
     } catch (err) {
-      alert("Failed to update status.");
+      console.error("Update error:", err);
     }
   };
 
+  // Login UI (unchanged)
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-6">
@@ -91,95 +96,52 @@ export default function AdminPage() {
           <input 
             type="password" 
             placeholder="ACCESS KEY" 
-            className="w-full bg-transparent border-b border-white/20 py-3 mb-6 outline-none focus:border-amber-600 text-white text-center tracking-widest uppercase"
+            className="w-full bg-transparent border-b border-white/20 py-3 mb-6 outline-none focus:border-amber-600 text-white text-center"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="w-full bg-amber-600 py-3 text-[10px] font-bold uppercase tracking-widest text-white">Enter Vault</button>
+          <button className="w-full bg-amber-600 py-3 text-white">Enter Vault</button>
         </form>
       </div>
     );
   }
 
+  // Dashboard UI
   return (
-    <main className="min-h-screen bg-[#050505] text-white p-8 font-sans">
+    <main className="min-h-screen bg-black text-white p-8">
       <div className="max-w-4xl mx-auto">
-        <header className="flex justify-between items-center mb-12 border-b border-white/5 pb-6">
-          <h1 className="font-serif text-3xl italic">Collection Management</h1>
-          <button onClick={() => setIsAuthenticated(false)} className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Lock Vault</button>
+        <header className="flex justify-between mb-12">
+          <h1 className="text-2xl font-serif italic">Collection Management</h1>
+          <button onClick={() => setIsAuthenticated(false)} className="text-xs text-gray-500">Lock Vault</button>
         </header>
 
-        {/* Product Entry Form */}
-        <section className="bg-neutral-900/40 p-10 border border-white/5 shadow-2xl">
-          <h2 className="text-amber-600 uppercase tracking-[0.4em] text-[10px] mb-10 font-bold">New Acquisition Details</h2>
-          <form onSubmit={handleSubmit} className="space-y-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <input 
-                required
-                placeholder="WATCH NAME" 
-                className="bg-transparent border-b border-white/10 py-3 outline-none focus:border-amber-600 text-sm uppercase tracking-wider"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-              />
-              <input 
-                required
-                placeholder="BRAND" 
-                className="bg-transparent border-b border-white/10 py-3 outline-none focus:border-amber-600 text-sm uppercase tracking-wider"
-                value={formData.brand}
-                onChange={(e) => setFormData({...formData, brand: e.target.value})}
-              />
-              <input 
-                required
-                type="number"
-                placeholder="PRICE (KSH)" 
-                className="bg-transparent border-b border-white/10 py-3 outline-none focus:border-amber-600 text-sm tracking-wider"
-                value={formData.price}
-                onChange={(e) => setFormData({...formData, price: e.target.value})}
-              />
-              <input 
-                required
-                placeholder="IMAGE URL" 
-                className="bg-transparent border-b border-white/10 py-3 outline-none focus:border-amber-600 text-sm tracking-wider"
-                value={formData.image_url}
-                onChange={(e) => setFormData({...formData, image_url: e.target.value})}
-              />
-            </div>
-            <button 
-              disabled={isProcessing}
-              className="bg-white text-black px-12 py-4 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-amber-600 hover:text-white transition-all disabled:bg-gray-800 disabled:text-gray-500"
-            >
-              {isProcessing ? "Processing..." : "Add to Collection"}
-            </button>
-          </form>
-        </section>
-
-        {/* Live Inventory List */}
-        <section className="mt-20">
-          <h2 className="text-amber-600 uppercase tracking-[0.4em] text-[10px] mb-8 font-bold">Live Inventory Control</h2>
-          <div className="grid gap-4">
-            {inventory.length === 0 ? (
-              <p className="text-gray-600 text-xs italic tracking-widest uppercase text-center py-10">The vault is currently empty.</p>
-            ) : (
-              inventory.map((watch: any) => (
-                <div key={watch.id} className="flex justify-between items-center bg-white/5 p-6 border border-white/5 hover:border-amber-600/30 transition-all">
-                  <div>
-                    <p className="font-serif text-lg italic">{watch.name}</p>
-                    <p className="text-[9px] uppercase tracking-widest text-gray-500">{watch.brand} • KSH {watch.price.toLocaleString()}</p>
-                  </div>
-                  <button 
-                    onClick={() => toggleSoldStatus(watch.id, watch.is_sold_out)}
-                    className={`px-6 py-2 text-[9px] uppercase tracking-widest font-bold border transition-colors ${
-                      watch.is_sold_out 
-                      ? "bg-red-900/20 text-red-500 border-red-500/50 hover:bg-red-900/40" 
-                      : "bg-green-900/20 text-green-500 border-green-500/50 hover:bg-green-900/40"
-                    }`}
-                  >
-                    {watch.is_sold_out ? "Sold Out" : "In Stock"}
-                  </button>
-                </div>
-              ))
-            )}
+        <form onSubmit={handleSubmit} className="space-y-6 bg-neutral-900/50 p-8 border border-white/5 mb-20">
+          <div className="grid grid-cols-2 gap-6">
+            <input required placeholder="NAME" value={formData.name} className="bg-transparent border-b border-white/10 p-2" onChange={(e) => setFormData({...formData, name: e.target.value})} />
+            <input required placeholder="BRAND" value={formData.brand} className="bg-transparent border-b border-white/10 p-2" onChange={(e) => setFormData({...formData, brand: e.target.value})} />
+            <input required type="number" placeholder="PRICE" value={formData.price} className="bg-transparent border-b border-white/10 p-2" onChange={(e) => setFormData({...formData, price: e.target.value})} />
+            <input required placeholder="IMAGE URL" value={formData.image_url} className="bg-transparent border-b border-white/10 p-2" onChange={(e) => setFormData({...formData, image_url: e.target.value})} />
           </div>
-        </section>
+          <button disabled={isProcessing} className="bg-white text-black px-8 py-3 uppercase text-xs font-bold tracking-widest">
+            {isProcessing ? "Processing..." : "Add to Collection"}
+          </button>
+        </form>
+
+        <div className="space-y-4">
+          {inventory.map((watch) => (
+            <div key={watch.id} className="flex justify-between items-center bg-white/5 p-4 border border-white/5">
+              <div>
+                <p className="font-serif italic">{watch.name}</p>
+                <p className="text-[10px] text-gray-500 uppercase">{watch.brand} • KSH {watch.price.toLocaleString()}</p>
+              </div>
+              <button 
+                onClick={() => toggleSoldStatus(watch.id, watch.is_sold_out)}
+                className={`px-4 py-2 text-[10px] font-bold border ${watch.is_sold_out ? "text-red-500 border-red-500/20" : "text-green-500 border-green-500/20"}`}
+              >
+                {watch.is_sold_out ? "SOLD" : "STOCK"}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );
