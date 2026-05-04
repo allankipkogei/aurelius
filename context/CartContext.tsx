@@ -4,12 +4,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 interface CartItem {
   id: number;
   name: string;
+  brand: string; // Add this line to fix the error
   price: number;
   image: string;
   quantity: number;
 }
 
-// 1. Add itemCount to the interface here
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: any) => void;
@@ -59,11 +59,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  // 2. Calculate the count
   const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    // 3. Pass it into the provider value
     <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, itemCount }}>
       {children}
     </CartContext.Provider>
