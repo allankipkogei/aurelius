@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-// Import from your Context, not the raw hook file, to avoid scope errors
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
@@ -30,14 +29,14 @@ export default function Navbar() {
         {/* Action Area (Mobile Toggle + Cart) */}
         <div className="flex items-center gap-4">
           {/* Cart Button */}
-          <button className="relative text-white border border-white/20 px-6 py-2 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+          <Link href="/cart" className="relative text-white border border-white/20 px-6 py-2 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
             Cart ({itemCount})
             {itemCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-amber-600 text-black w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold animate-in zoom-in">
+              <span className="absolute -top-2 -right-2 bg-amber-600 text-black w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold animate-pulse">
                 {itemCount}
               </span>
             )}
-          </button>
+          </Link>
 
           {/* Mobile Toggle */}
           <button 

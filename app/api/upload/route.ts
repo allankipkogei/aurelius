@@ -31,8 +31,17 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
 
     return NextResponse.json(blob);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Vercel Blob Error:", error);
+    
+    // Check if it's a missing token error
+    if (error.message?.includes('No token found')) {
+      return NextResponse.json(
+        { error: "Missing BLOB_READ_WRITE_TOKEN. Get a token from https://vercel.com/account/tokens (Blob scope) and add it to .env.local" }, 
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

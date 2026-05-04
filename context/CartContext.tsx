@@ -13,6 +13,8 @@ interface CartItem {
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: any) => void;
+  removeFromCart: (id: number) => void;
+  updateQuantity: (id: number, quantity: number) => void;
   itemCount: number; 
 }
 
@@ -37,12 +39,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const removeFromCart = (id: number) => {
+    setCart((prev) => {
+      const newCart = prev.filter(item => item.id !== id);
+      localStorage.setItem("aurelius_cart", JSON.stringify(newCart));
+      return newCart;
+    });
+  };
+
+  const updateQuantity = (id: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(id);
+      return;
+    }
+    setCart((prev) => {
+      const newCart = prev.map(item => item.id === id ? {...item, quantity} : item);
+      localStorage.setItem("aurelius_cart", JSON.stringify(newCart));
+      return newCart;
+    });
+  };
+
   // 2. Calculate the count
   const itemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     // 3. Pass it into the provider value
-    <CartContext.Provider value={{ cart, addToCart, itemCount }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, itemCount }}>
       {children}
     </CartContext.Provider>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useCart } from "../../context/CartContext";
 
@@ -21,9 +22,12 @@ export default function ProductCard({
   isSoldOut
 }: ProductCardProps) {
   const { addToCart } = useCart();
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const handleAddToCart = () => {
     addToCart({ id, name, brand, price, image });
+    setShowFeedback(true);
+    setTimeout(() => setShowFeedback(false), 2000);
   };
 
   return (
@@ -34,6 +38,7 @@ export default function ProductCard({
           src={image}
           alt={`${brand} ${name}`}
           fill
+          unoptimized
           className="object-cover transition-transform duration-700 group-hover:scale-110"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
@@ -57,6 +62,16 @@ export default function ProductCard({
         {isSoldOut && (
           <div className="absolute top-4 left-4 bg-amber-600 text-black px-3 py-1 text-[8px] font-bold uppercase tracking-widest">
             Sold
+          </div>
+        )}
+
+        {/* Feedback Toast */}
+        {showFeedback && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in zoom-in">
+            <div className="text-center">
+              <p className="text-white text-sm font-bold mb-2">✓ Added to vault</p>
+              <p className="text-gray-400 text-[10px]">{name}</p>
+            </div>
           </div>
         )}
       </div>

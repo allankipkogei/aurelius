@@ -1,4 +1,3 @@
-import Navbar from "./components/Navbar";
 import ProductCard from "./components/ProductCard";
 import { RiWhatsappFill } from 'react-icons/ri';
 import { db } from '@vercel/postgres'; // Assuming you're using Vercel Postgres
@@ -19,8 +18,6 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white antialiased">
-      <Navbar />
-
       {/* Hero Section */}
       <section className="pt-40 pb-20 px-6 text-center">
         <h1 className="text-5xl md:text-8xl font-serif mb-6 italic">
