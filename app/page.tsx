@@ -1,4 +1,4 @@
-import ProductCard from "./components/ProductCard";
+import CollectionView from "./components/CollectionView";
 import { RiWhatsappFill } from 'react-icons/ri';
 import { db } from '@vercel/postgres';
 
@@ -33,38 +33,8 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* Collection Section */}
-      <section id="collection" className="max-w-7xl mx-auto px-6 py-24">
-        <div className="flex justify-between items-end mb-16 border-b border-white/10 pb-8">
-          <div>
-            <h3 className="text-amber-600 uppercase tracking-[0.5em] text-[9px] mb-4">The 2026 Registry</h3>
-            <h2 className="text-4xl font-serif italic">Selected Curations</h2>
-          </div>
-          <button className="text-[10px] uppercase tracking-[0.3em] text-gray-500 hover:text-amber-600 transition-colors">
-            View Full Gallery
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-          {inventory.length === 0 ? (
-            <div className="col-span-full py-20 text-center border border-white/5 bg-neutral-900/20">
-              <p className="text-gray-500 uppercase tracking-widest text-[10px]">Awaiting New Acquisitions</p>
-            </div>
-          ) : (
-            inventory.map((watch) => (
-              <ProductCard
-                key={watch.id}
-                id={watch.id}
-                name={watch.name}
-                brand={watch.brand}
-                price={watch.price}
-                image={watch.image_url}
-                isSoldOut={watch.is_sold_out}
-              />
-            ))
-          )}
-        </div>
-      </section>
+      {/* Collection Section with Search & Filters */}
+      <CollectionView initialWatches={inventory} />
 
       {/* Heritage Section */}
       <section id="heritage" className="py-32 px-6 bg-neutral-950">
