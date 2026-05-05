@@ -22,9 +22,12 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "No file body provided" }, { status: 400 });
   }
 
-  // 2. Perform the upload to Vercel Blob
+  // 2. Convert request body to Buffer for Vercel Blob
   try {
-    const blob = await put(filename, request.body, {
+    const buffer = await request.arrayBuffer();
+    
+    // 3. Perform the upload to Vercel Blob
+    const blob = await put(filename, buffer, {
       access: 'public',
       // Explicitly setting contentType helps browsers render the images correctly
       contentType: fileExtension === 'svg' ? 'image/svg+xml' : `image/${fileExtension}`,
@@ -44,6 +47,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
     
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    // Return more detailed error for debugging
+    return NextResponse.json({ 
+      error: error.message || "Upload failed",
+      details: error.code || error.status
+    }, { status: 500 });
   }
 }
