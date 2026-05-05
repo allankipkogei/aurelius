@@ -57,19 +57,27 @@ export default function CollectionView({ initialWatches }: CollectionViewProps) 
       </div>
 
       {/* Search and Filters */}
-      <SearchFilter brands={brands} onFilter={handleFilter} />
+      <div className="mb-12">
+        <SearchFilter brands={brands} onFilter={handleFilter} />
+      </div>
 
-      {/* Results Grid - with min-height to prevent jumping */}
-      <div className="min-h-[500px]">
-        {isLoading && (
-          <div className="space-y-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-96 bg-neutral-900/40 border border-white/5 animate-pulse rounded" />
+      {/* Results Grid - with fixed layout to prevent jumping */}
+      <div>
+        {isLoading ? (
+          // Skeleton Grid - matches product card layout exactly
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-neutral-900/40 border border-white/5 animate-pulse">
+                <div className="aspect-[4/5] bg-neutral-800" />
+                <div className="p-6 space-y-3">
+                  <div className="h-3 bg-neutral-700 rounded w-2/3" />
+                  <div className="h-4 bg-neutral-700 rounded w-full" />
+                  <div className="h-3 bg-neutral-700 rounded w-1/2" />
+                </div>
+              </div>
             ))}
           </div>
-        )}
-
-        {!isLoading && (
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             {watches.length === 0 ? (
               <div className="col-span-full py-20 text-center border border-white/5 bg-neutral-900/20">
