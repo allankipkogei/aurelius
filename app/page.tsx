@@ -34,7 +34,7 @@ export default async function Home() {
       </section>
 
       {/* Collection Section with Search & Filters */}
-      <CollectionView initialWatches={inventory} />
+      <CollectionView initialWatches={inventory as any} />
 
       {/* Heritage Section */}
       <section id="heritage" className="py-32 px-6 bg-neutral-950">

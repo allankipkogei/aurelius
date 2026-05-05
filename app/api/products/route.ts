@@ -32,52 +32,45 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search')?.toLowerCase() || '';
-    const brand = searchParams.get('brand') || '';
+    const brand = searchParams.get('brand')?.toLowerCase() || '';
     const minPrice = searchParams.get('minPrice') ? parseInt(searchParams.get('minPrice')!) : 0;
-    const maxPrice = searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!) : Infinity;
+    const maxPrice = searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!) : 10000000;
     const sort = searchParams.get('sort') || 'newest';
 
-    // Build query with filters
-    let query = `SELECT * FROM watches WHERE is_sold_out = false`;
+    // Fetch all active watches
+    const { rows: allWatches } = await client.sql`SELECT * FROM watches WHERE is_sold_out = false ORDER BY created_at DESC`;
 
-    if (search) {
-      query += ` AND (LOWER(name) LIKE $1 OR LOWER(brand) LIKE $1)`;
-    }
-    if (brand) {
-      query += search ? ` AND LOWER(brand) = $2` : ` AND LOWER(brand) = $1`;
-    }
+    // Filter in memory
+    let filtered = allWatches.filter((watch: any) => {
+      const matchesSearch = !search || 
+        watch.name.toLowerCase().includes(search) || 
+        watch.brand.toLowerCase().includes(search);
+      
+      const matchesBrand = !brand || watch.brand.toLowerCase() === brand;
+      
+      const matchesPrice = watch.price >= minPrice && watch.price <= maxPrice;
 
-    // Price filter
-    query += search || brand ? ` AND price >= $${search && brand ? 3 : search || brand ? 2 : 1} AND price <= $${search && brand ? 4 : search || brand ? 3 : 2}` : ` AND price >= $1 AND price <= $2`;
+      return matchesSearch && matchesBrand && matchesPrice;
+    });
 
-    // Add sorting
+    // Sort
     switch (sort) {
       case 'price-low':
-        query += ' ORDER BY price ASC';
+        filtered.sort((a: any, b: any) => a.price - b.price);
         break;
       case 'price-high':
-        query += ' ORDER BY price DESC';
+        filtered.sort((a: any, b: any) => b.price - a.price);
         break;
       case 'name':
-        query += ' ORDER BY name ASC';
+        filtered.sort((a: any, b: any) => a.name.localeCompare(b.name));
         break;
       default: // 'newest'
-        query += ' ORDER BY created_at DESC';
+        filtered.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     }
 
-    // Build parameters array based on what filters are active
-    const params: any[] = [];
-    if (search) params.push(`%${search}%`);
-    if (brand) params.push(brand.toLowerCase());
-    params.push(minPrice);
-    params.push(maxPrice);
-
-    const { rows } = await client.sql(query, params);
-
-    // Create response with explicit cache control headers
-    const response = NextResponse.json(rows);
+    const response = NextResponse.json(filtered);
     response.headers.set('Cache-Control', 'no-store, max-age=0');
-
+    
     return response;
   } catch (error) {
     console.error("Fetch error:", error);
