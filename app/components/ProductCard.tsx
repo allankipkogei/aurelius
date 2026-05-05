@@ -9,7 +9,7 @@ interface ProductCardProps {
   name: string;
   brand: string;
   price: number;
-  image: string;
+  image: string | string[]; // Allow for array or string
   isSoldOut?: boolean;
 }
 
@@ -24,8 +24,14 @@ export default function ProductCard({
   const { addToCart } = useCart();
   const [showFeedback, setShowFeedback] = useState(false);
 
+  // 1. Resolve the image source logic
+  // Fallback to a placeholder if the image is missing or empty
+  const resolvedImage = Array.isArray(image) 
+    ? (image[0] || "/placeholder-watch.jpg") 
+    : (image || "/placeholder-watch.jpg");
+
   const handleAddToCart = () => {
-    addToCart({ id, name, brand, price, image });
+    addToCart({ id, name, brand, price, image: resolvedImage });
     setShowFeedback(true);
     setTimeout(() => setShowFeedback(false), 2000);
   };
@@ -35,7 +41,7 @@ export default function ProductCard({
       {/* Image Container */}
       <div className="relative aspect-[4/5] overflow-hidden bg-neutral-800">
         <Image
-          src={image}
+          src={resolvedImage} // Use the resolved URL
           alt={`${brand} ${name}`}
           fill
           unoptimized

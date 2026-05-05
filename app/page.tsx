@@ -1,21 +1,25 @@
 import CollectionView from "./components/CollectionView";
 import { RiWhatsappFill } from 'react-icons/ri';
-import { db } from '@vercel/postgres';
+import { Pool } from 'pg'; // - Switch to standard pg driver
+
+// Configure the local connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL, // - Uses your local .env.local string
+});
 
 async function getWatches() {
   try {
-    // Fetching directly from your database for the "2026 Registry"
-    const { rows } = await db.sql`SELECT * FROM watches ORDER BY created_at DESC;`;
+    // Querying your local PostgreSQL instance
+    const { rows } = await pool.query('SELECT * FROM watches ORDER BY created_at DESC;');
     return rows;
   } catch (error) {
     console.error("Database connection failed:", error);
-    console.warn("Database unavailable. The homepage will display with an empty collection message.");
     return [];
   }
 }
 
-export const dynamic = 'force-dynamic'; // Always render dynamically to ensure fresh data
-export const revalidate = 0; // Disable caching
+export const dynamic = 'force-dynamic'; 
+export const revalidate = 0; 
 
 export default async function Home() {
   const inventory = await getWatches();
@@ -45,7 +49,6 @@ export default async function Home() {
             <p className="text-gray-400 leading-relaxed font-light tracking-wide">
               Aurelius was founded in Nairobi for those who understand that a timepiece is more than a tool—it is an inheritance. We curate only pieces that command respect and maintain the horological integrity required by East Africa's most discerning collectors.
             </p>
-
           </div>
 
           <div className="w-full lg:w-1/2 aspect-[4/5] relative grayscale hover:grayscale-0 transition-all duration-1000 border border-white/5">
