@@ -59,36 +59,41 @@ export default function CollectionView({ initialWatches }: CollectionViewProps) 
       {/* Search and Filters */}
       <SearchFilter brands={brands} onFilter={handleFilter} />
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="text-center py-12">
-          <p className="text-gray-500 uppercase tracking-widest text-[10px]">Refining selection...</p>
-        </div>
-      )}
-
-      {/* Results */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-        {watches.length === 0 ? (
-          <div className="col-span-full py-20 text-center border border-white/5 bg-neutral-900/20">
-            <p className="text-gray-500 uppercase tracking-widest text-[10px]">No watches match your criteria</p>
+      {/* Results Grid - with min-height to prevent jumping */}
+      <div className="min-h-[500px]">
+        {isLoading && (
+          <div className="space-y-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-96 bg-neutral-900/40 border border-white/5 animate-pulse rounded" />
+            ))}
           </div>
-        ) : (
-          watches.map((watch) => (
-            <ProductCard
-              key={watch.id}
-              id={watch.id}
-              name={watch.name}
-              brand={watch.brand}
-              price={watch.price}
-              image={watch.image_url}
-              isSoldOut={watch.is_sold_out}
-            />
-          ))
+        )}
+
+        {!isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+            {watches.length === 0 ? (
+              <div className="col-span-full py-20 text-center border border-white/5 bg-neutral-900/20">
+                <p className="text-gray-500 uppercase tracking-widest text-[10px]">No watches match your criteria</p>
+              </div>
+            ) : (
+              watches.map((watch) => (
+                <ProductCard
+                  key={watch.id}
+                  id={watch.id}
+                  name={watch.name}
+                  brand={watch.brand}
+                  price={watch.price}
+                  image={watch.image_url}
+                  isSoldOut={watch.is_sold_out}
+                />
+              ))
+            )}
+          </div>
         )}
       </div>
 
       {/* Result Count */}
-      {watches.length > 0 && (
+      {!isLoading && watches.length > 0 && (
         <div className="text-center mt-12">
           <p className="text-gray-500 text-[9px] uppercase tracking-widest">
             Showing {watches.length} {watches.length === 1 ? "piece" : "pieces"}
