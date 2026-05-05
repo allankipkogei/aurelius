@@ -1,15 +1,25 @@
 import ProductCard from "./components/ProductCard";
 import { RiWhatsappFill } from 'react-icons/ri';
-import { db } from '@vercel/postgres'; // Assuming you're using Vercel Postgres
 
 async function getWatches() {
   try {
-    // Fetching directly from your database for the "2026 Registry"
-    // Adding no-store to prevent caching and always fetch fresh data
-    const { rows } = await db.sql`SELECT * FROM watches ORDER BY created_at DESC;`;
-    return rows;
+    // Fetch from API instead of querying DB directly
+    // This ensures consistency and proper cache control
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000';
+    
+    const res = await fetch(`${baseUrl}/api/products`, {
+      cache: 'no-store' // Disable caching for this fetch
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch watches');
+    }
+
+    return await res.json();
   } catch (error) {
-    console.error("Database connection failed:", error);
+    console.error("Failed to fetch watches:", error);
     console.warn("Database unavailable. The homepage will display with an empty collection message.");
     return [];
   }

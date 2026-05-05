@@ -31,7 +31,12 @@ export async function GET() {
   const client = await db.connect();
   try {
     const { rows } = await client.sql`SELECT * FROM watches ORDER BY created_at DESC;`;
-    return NextResponse.json(rows);
+    
+    // Create response with explicit cache control headers
+    const response = NextResponse.json(rows);
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    
+    return response;
   } catch (error) {
     console.error("Fetch error:", error);
     return NextResponse.json({ error: "Failed to fetch inventory" }, { status: 500 });
