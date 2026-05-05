@@ -5,6 +5,7 @@ import { db } from '@vercel/postgres'; // Assuming you're using Vercel Postgres
 async function getWatches() {
   try {
     // Fetching directly from your database for the "2026 Registry"
+    // Adding no-store to prevent caching and always fetch fresh data
     const { rows } = await db.sql`SELECT * FROM watches ORDER BY created_at DESC;`;
     return rows;
   } catch (error) {
@@ -13,6 +14,8 @@ async function getWatches() {
     return [];
   }
 }
+
+export const revalidate = 0; // Disable caching - fetch fresh data on every request
 
 export default async function Home() {
   const inventory = await getWatches();
