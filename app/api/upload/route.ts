@@ -28,6 +28,8 @@ export async function POST(request: Request): Promise<NextResponse> {
       access: 'public',
       // Explicitly setting contentType helps browsers render the images correctly
       contentType: fileExtension === 'svg' ? 'image/svg+xml' : `image/${fileExtension}`,
+      // Add random suffix to generate unique filename if blob already exists
+      addRandomSuffix: true,
     });
 
     return NextResponse.json(blob);

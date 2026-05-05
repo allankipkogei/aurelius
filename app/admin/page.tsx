@@ -43,7 +43,8 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "Aurelius2026") {
+    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "Aurelius2026";
+    if (password === adminPassword) {
       setIsAuthenticated(true);
     } else {
       alert("Unauthorized access.");

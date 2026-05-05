@@ -9,6 +9,7 @@ async function getWatches() {
     return rows;
   } catch (error) {
     console.error("Database connection failed:", error);
+    console.warn("Database unavailable. The homepage will display with an empty collection message.");
     return [];
   }
 }
