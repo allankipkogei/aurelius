@@ -1,31 +1,21 @@
 import ProductCard from "./components/ProductCard";
 import { RiWhatsappFill } from 'react-icons/ri';
+import { db } from '@vercel/postgres';
 
 async function getWatches() {
   try {
-    // Fetch from API instead of querying DB directly
-    // This ensures consistency and proper cache control
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000';
-    
-    const res = await fetch(`${baseUrl}/api/products`, {
-      cache: 'no-store' // Disable caching for this fetch
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch watches');
-    }
-
-    return await res.json();
+    // Fetching directly from your database for the "2026 Registry"
+    const { rows } = await db.sql`SELECT * FROM watches ORDER BY created_at DESC;`;
+    return rows;
   } catch (error) {
-    console.error("Failed to fetch watches:", error);
+    console.error("Database connection failed:", error);
     console.warn("Database unavailable. The homepage will display with an empty collection message.");
     return [];
   }
 }
 
-export const revalidate = 0; // Disable caching - fetch fresh data on every request
+export const dynamic = 'force-dynamic'; // Always render dynamically to ensure fresh data
+export const revalidate = 0; // Disable caching
 
 export default async function Home() {
   const inventory = await getWatches();
