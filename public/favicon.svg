@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background -->
+  <rect width="200" height="200" fill="black"/>
+  <!-- Orange circle -->
+  <circle cx="100" cy="100" r="85" fill="#ff9500"/>
+  <!-- White letter A -->
+  <text x="100" y="125" font-size="100" font-weight="bold" font-family="Arial, sans-serif" fill="white" text-anchor="middle" dominant-baseline="middle">A</text>
+</svg>
