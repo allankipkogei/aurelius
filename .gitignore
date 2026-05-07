@@ -42,3 +42,9 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+/app/generated/prisma
+
+# Aurelius Vault Secrets & Local DB
+users.json
+.proxy

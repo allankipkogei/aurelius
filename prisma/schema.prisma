@@ -1,0 +1,35 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Watch {
+  id          Int      @id @default(autoincrement())
+  name        String
+  brand       String
+  price       Int
+  image_url   String
+  is_sold_out Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model VerificationToken {
+  id        Int      @id @default(autoincrement())
+  email     String
+  otp       String   // The 6-digit code
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([email, otp])
+}

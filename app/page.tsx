@@ -82,7 +82,7 @@ export default async function Home() {
       </section>
 
       <footer className="py-20 border-t border-white/5 text-center">
-        <p className="text-gray-600 text-[10px] uppercase tracking-[0.5em]">© 2026 Aurelius Timepieces</p>
+        <p className="text-gray-600 text-[10px] uppercase tracking-[0.5em]">&copy; {new Date().getFullYear()} Aurelius Timepieces. All rights reserved.</p>
       </footer>
     </main>
   );

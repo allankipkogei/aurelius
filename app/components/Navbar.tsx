@@ -2,11 +2,18 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation"; // 1. Import usePathname
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { itemCount } = useCart();
+  const pathname = usePathname(); // 2. Get current route
+
+  // 3. Hide if the path starts with /admin
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-white/5 px-6 md:px-12 py-6">
@@ -21,9 +28,9 @@ export default function Navbar() {
         
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-12 text-[10px] uppercase tracking-[0.3em] text-gray-400">
-          <Link href="#collection" className="hover:text-amber-600 transition-colors">Collection</Link>
-          <Link href="#heritage" className="hover:text-amber-600 transition-colors">Heritage</Link>
-          <Link href="#contact" className="hover:text-amber-600 transition-colors">Contact</Link>
+          <Link href="/#collection" className="hover:text-amber-600 transition-colors">Collection</Link>
+          <Link href="/#heritage" className="hover:text-amber-600 transition-colors">Heritage</Link>
+          <Link href="/#contact" className="hover:text-amber-600 transition-colors">Contact</Link>
         </div>
 
         {/* Action Area (Mobile Toggle + Cart) */}
@@ -53,9 +60,9 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       {isOpen && (
         <div className="absolute top-full left-0 w-full bg-black border-b border-white/10 flex flex-col p-8 gap-6 md:hidden animate-in fade-in slide-in-from-top-4">
-          <Link href="#collection" onClick={() => setIsOpen(false)} className="text-[10px] uppercase tracking-[0.3em] text-white">Collection</Link>
-          <Link href="#heritage" onClick={() => setIsOpen(false)} className="text-[10px] uppercase tracking-[0.3em] text-white">Heritage</Link>
-          <Link href="#contact" onClick={() => setIsOpen(false)} className="text-[10px] uppercase tracking-[0.3em] text-white">Contact</Link>
+          <Link href="/#collection" onClick={() => setIsOpen(false)} className="text-[10px] uppercase tracking-[0.3em] text-white">Collection</Link>
+          <Link href="/#heritage" onClick={() => setIsOpen(false)} className="text-[10px] uppercase tracking-[0.3em] text-white">Heritage</Link>
+          <Link href="/#contact" onClick={() => setIsOpen(false)} className="text-[10px] uppercase tracking-[0.3em] text-white">Contact</Link>
         </div>
       )}
     </nav>

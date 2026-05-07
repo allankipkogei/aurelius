@@ -106,6 +106,11 @@ export default function CartPage() {
             </div>
           </>
         )}
+
+        {/* Footer */}
+        <footer className="mt-20 pt-12 border-t border-white/10 text-center">
+          <p className="text-gray-600 text-[10px] uppercase tracking-[0.5em]">&copy; {new Date().getFullYear()} Aurelius Timepieces. All rights reserved.</p>
+        </footer>
       </div>
     </main>
   );
